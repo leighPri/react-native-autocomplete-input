@@ -74,7 +74,11 @@ class Autocomplete extends Component {
     /**
      * renders custom TextInput. All props passed to this function.
      */
-    renderTextInput: PropTypes.func
+    renderTextInput: PropTypes.func,
+    /**
+     * allows custom rerender. Simply pass 'true' to rerender on every prop update
+     */
+    rerenderWhen: PropTypes.bool
   };
 
   static defaultProps = {
@@ -90,7 +94,7 @@ class Autocomplete extends Component {
   constructor(props) {
     super(props);
 
-    const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+    const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 || props.rerenderWhen });
     this.state = { dataSource: ds.cloneWithRows(props.data) };
     this.resultList = null;
   }
@@ -118,14 +122,7 @@ class Autocomplete extends Component {
 
   renderResultList() {
     const { dataSource } = this.state;
-    const {
-      listStyle,
-      renderItem,
-      renderSeparator,
-      keyboardShouldPersistTaps,
-      onEndReached,
-      onEndReachedThreshold
-    } = this.props;
+    const { listStyle, renderItem, renderSeparator, keyboardShouldPersistTaps } = this.props;
 
     return (
       <ListView
@@ -134,8 +131,6 @@ class Autocomplete extends Component {
         keyboardShouldPersistTaps={keyboardShouldPersistTaps}
         renderRow={renderItem}
         renderSeparator={renderSeparator}
-        onEndReached={onEndReached}
-        onEndReachedThreshold={onEndReachedThreshold}
         style={[styles.list, listStyle]}
       />
     );
